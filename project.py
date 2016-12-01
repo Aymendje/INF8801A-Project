@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 video = cv2.VideoCapture("Typing3.mp4")
+hog_desc = cv2.HOGDescriptor()
 
 def show_histogram_color(frame):
     # Now create a histogram for the frame
@@ -53,8 +54,12 @@ while(True):
     cv2.imshow('frame',gray)
 
 
-    show_histogram_color(frame);
-    show_histogram_black(frame);
+    #show_histogram_color(frame)
+    #show_histogram_black(frame)
+    
+    hog = hog_desc.compute(frame)
+    #cv2.imshow("Hog", hog)
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
