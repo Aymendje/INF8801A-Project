@@ -1,7 +1,9 @@
 import numpy as np
-import cv2
-video = cv2.VideoCapture("Typing3.mp4")
+import cv2, os
+video = cv2.VideoCapture(0)
 hog_desc = cv2.HOGDescriptor()
+
+hog_list = []
 
 def show_histogram_color(frame):
     # Now create a histogram for the frame
@@ -35,29 +37,41 @@ def show_histogram_black(frame):
     cv2.polylines(h, [pts], False, 1)
 
     h = np.flipud(h)
-#   h = cv2.resize(h,None,fx=4, fy=2, interpolation = cv2.INTER_CUBIC)
+    # h = cv2.resize(h,None,fx=4, fy=2, interpolation = cv2.INTER_CUBIC)
     # Display histogram
     cv2.imshow('Histogram2', h)
 
+def load_learned_numbers():
+    # dtype=float32
+    global hog_list
+    for file in os.listdir("./hog"):
+        if file.endswith(".xml"):
+            hog_list.append([file, np.fromfile("./hog/"+file, dtype=np.float32)])
+
+
+load_learned_numbers()
+ret, image_1 = video.read()
 while(True):
     # Capture frame-by-frame
     ret, frame = video.read()
+    image = cv2.subtract(image_1,frame)
+    image_1 = frame
 
     rows,cols,color = frame.shape
 #    M = cv2.getRotationMatrix2D((cols/2,rows/2),180,1)
 #    frame = cv2.warpAffine(frame,M,(cols,rows))
 
     # Our operations on the frame come here
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Display the resulting frame
     cv2.imshow('frame',gray)
 
 
-    #show_histogram_color(frame)
-    #show_histogram_black(frame)
+    show_histogram_color(frame)
+    show_histogram_black(frame)
     
-    hog = hog_desc.compute(frame)
+    hog = hog_desc.compute(image)
     #cv2.imshow("Hog", hog)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
