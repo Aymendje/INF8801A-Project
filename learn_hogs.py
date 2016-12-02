@@ -20,7 +20,6 @@ for fileName in fileNames:
         image = cv2.subtract(image_1,frame)
         #image_1 = frame
 
-        rows,cols,color = frame.shape
         # Our operations on the frame come here
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
